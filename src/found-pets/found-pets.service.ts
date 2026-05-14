@@ -6,7 +6,6 @@ import { LostPetEntity } from '../lost-pets/entities/lost-pet.entity';
 import { CacheService } from '../cache/cache.service';
 import { EmailService } from '../email/email.service';
 import { generateMapBoxStaticImage } from '../utils/mapbox.util';
-import { envs } from '../config/envs';
 import { logger } from '../config/logger';
 
 const CACHE_KEY_FOUND_PETS = 'found_pets';
@@ -20,7 +19,7 @@ export class FoundPetsService {
     private readonly lostPetRepository: Repository<LostPetEntity>,
     private readonly cacheService: CacheService,
     private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   async findAll() {
     try {
@@ -32,7 +31,7 @@ export class FoundPetsService {
 
       const foundPets = await this.foundPetRepository.find();
       logger.info('[FoundPetsService] Retornando mascotas encontradas desde la BASE DE DATOS');
-      
+
       this.cacheService.set(CACHE_KEY_FOUND_PETS, foundPets);
       return foundPets;
     } catch (error) {
@@ -41,7 +40,18 @@ export class FoundPetsService {
     }
   }
 
-  async create(createDto: { title: string; description: string; lat: number; lon: number }) {
+  async create(createDto: {
+    title: string;
+    description: string;
+    lat: number;
+    lon: number;
+    species?: string;
+    breed?: string;
+    color?: string;
+    finder_name?: string;
+    finder_email?: string;
+    finder_phone?: string;
+  }) {
     // 1. Save new found pet
     await this.foundPetRepository
       .createQueryBuilder()
@@ -52,11 +62,17 @@ export class FoundPetsService {
         description: createDto.description,
         lat: createDto.lat,
         lon: createDto.lon,
+        species: createDto.species,
+        breed: createDto.breed,
+        color: createDto.color,
+        finder_name: createDto.finder_name,
+        finder_email: createDto.finder_email,
+        finder_phone: createDto.finder_phone,
         location: () => `ST_SetSRID(ST_MakePoint(${createDto.lon}, ${createDto.lat}), 4326)::geography`,
       })
       .execute();
 
-    // 2. Búsqueda por Radio (ST_DWithin): Buscar mascotas perdidas a 500m
+    // 2. Búsqueda por Radio (ST_DWithin): Buscar mascotas perdidas a 500 metros
     const radius = 500;
     const nearbyLostPets = await this.lostPetRepository
       .createQueryBuilder('lost_pet')
@@ -96,9 +112,9 @@ export class FoundPetsService {
     // 4. Clear found pets cache
     await this.cacheService.del(CACHE_KEY_FOUND_PETS);
 
-    return { 
-      success: true, 
-      nearbyLostPets 
+    return {
+      success: true,
+      nearbyLostPets
     };
   }
 }

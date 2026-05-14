@@ -34,7 +34,15 @@ export class LostPetsService {
     }
   }
 
-  async create(createDto: { title: string; description: string; lat: number; lon: number }) {
+  async create(createDto: {
+    title: string;
+    description: string;
+    lat: number;
+    lon: number;
+    species?: string;
+    breed?: string;
+    color?: string;
+  }) {
     await this.lostPetRepository
       .createQueryBuilder()
       .insert()
@@ -44,6 +52,9 @@ export class LostPetsService {
         description: createDto.description,
         lat: createDto.lat,
         lon: createDto.lon,
+        species: createDto.species,
+        breed: createDto.breed,
+        color: createDto.color,
         is_active: true,
         location: () => `ST_SetSRID(ST_MakePoint(${createDto.lon}, ${createDto.lat}), 4326)::geography`,
       })

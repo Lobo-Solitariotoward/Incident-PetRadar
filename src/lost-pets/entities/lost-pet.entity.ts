@@ -11,6 +11,15 @@ export class LostPetEntity {
   @Column('text')
   description: string;
 
+  @Column({ nullable: true })
+  species: string;
+
+  @Column({ nullable: true })
+  breed: string;
+
+  @Column({ nullable: true })
+  color: string;
+
   @Column({ default: true })
   is_active: boolean;
 

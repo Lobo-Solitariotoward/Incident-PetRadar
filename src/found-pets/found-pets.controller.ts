@@ -11,7 +11,18 @@ export class FoundPetsController {
   }
 
   @Post()
-  async createFoundPet(@Body() createDto: { title: string; description: string; lat: number; lon: number }) {
+  async createFoundPet(@Body() createDto: {
+    title: string;
+    description: string;
+    lat: number;
+    lon: number;
+    species?: string;
+    breed?: string;
+    color?: string;
+    finder_name?: string;
+    finder_email?: string;
+    finder_phone?: string;
+  }) {
     return this.foundPetsService.create(createDto);
   }
 }

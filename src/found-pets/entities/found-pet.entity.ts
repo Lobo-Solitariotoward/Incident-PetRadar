@@ -11,6 +11,24 @@ export class FoundPetEntity {
   @Column('text')
   description: string;
 
+  @Column({ nullable: true })
+  species: string;
+
+  @Column({ nullable: true })
+  breed: string;
+
+  @Column({ nullable: true })
+  color: string;
+
+  @Column({ nullable: true })
+  finder_name: string;
+
+  @Column({ nullable: true })
+  finder_email: string;
+
+  @Column({ nullable: true })
+  finder_phone: string;
+
   @Column('float')
   lat: number;
 

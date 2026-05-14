@@ -11,7 +11,15 @@ export class LostPetsController {
   }
 
   @Post()
-  async createLostPet(@Body() createDto: { title: string; description: string; lat: number; lon: number }) {
+  async createLostPet(@Body() createDto: {
+    title: string;
+    description: string;
+    lat: number;
+    lon: number;
+    species?: string;
+    breed?: string;
+    color?: string;
+  }) {
     return this.lostPetsService.create(createDto);
   }
 }
