@@ -1,8 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LostPetEntity } from './entities/lost-pet.entity';
 import { CacheService } from '../cache/cache.service';
+import { CreateLostPetDto } from './dto/create-lost-pet.dto';
 import { logger } from '../config/logger';
 
 const CACHE_KEY_LOST_PETS = 'lost_pets_active';
@@ -34,15 +35,7 @@ export class LostPetsService {
     }
   }
 
-  async create(createDto: {
-    title: string;
-    description: string;
-    lat: number;
-    lon: number;
-    species?: string;
-    breed?: string;
-    color?: string;
-  }) {
+  async create(createDto: CreateLostPetDto) {
     await this.lostPetRepository
       .createQueryBuilder()
       .insert()

@@ -5,6 +5,7 @@ import { FoundPetEntity } from './entities/found-pet.entity';
 import { LostPetEntity } from '../lost-pets/entities/lost-pet.entity';
 import { CacheService } from '../cache/cache.service';
 import { EmailService } from '../email/email.service';
+import { CreateFoundPetDto } from './dto/create-found-pet.dto';
 import { generateMapBoxStaticImage } from '../utils/mapbox.util';
 import { logger } from '../config/logger';
 
@@ -40,18 +41,7 @@ export class FoundPetsService {
     }
   }
 
-  async create(createDto: {
-    title: string;
-    description: string;
-    lat: number;
-    lon: number;
-    species?: string;
-    breed?: string;
-    color?: string;
-    finder_name?: string;
-    finder_email?: string;
-    finder_phone?: string;
-  }) {
+  async create(createDto: CreateFoundPetDto) {
     // 1. Save new found pet
     await this.foundPetRepository
       .createQueryBuilder()
