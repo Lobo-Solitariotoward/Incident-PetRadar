@@ -4,24 +4,32 @@ import { envs } from 'src/config/envs';
 
 @Injectable()
 export class CacheService {
-    private readonly redis = new Redis({
-        host: envs.REDIS_HOST,
-        port: envs.REDIS_PORT,
-    });
+    private redis: Redis | null = null;
 
-    async set(key: string, value: any){
+    constructor() {
+        if (envs.REDIS_HOST) {
+            this.redis = new Redis({
+                host: envs.REDIS_HOST,
+                port: envs.REDIS_PORT,
+            });
+        }
+    }
+
+    async set(key: string, value: any) {
+        if (!this.redis) return;
         const json = JSON.stringify(value);
-        this.redis.set(key, json);
+        await this.redis.set(key, json);
     }
 
     async get<T>(key: string): Promise<T | null> {
+        if (!this.redis) return null;
         const data = await this.redis.get(key);
-        if(!data) return null;
-        const object = JSON.parse(data) as T;
-        return object;
+        if (!data) return null;
+        return JSON.parse(data) as T;
     }
 
-    async del(key: string){
+    async del(key: string) {
+        if (!this.redis) return;
         await this.redis.del(key);
     }
 }
